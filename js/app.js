@@ -44,6 +44,7 @@ function filledSlotHTML(index, channel){
     '<div class="mount" id="mount-' + index + '"></div>' +
     '<div class="focus-catcher" title="Click to focus this stream">' +
       '<span class="expand-icon">&#10021;</span>' +
+      '<span class="collapse-icon">&#10529;</span>' +
     "</div>"
   );
 }
@@ -120,7 +121,8 @@ function addStream(index, channel){
   });
   slot.querySelector(".focus-catcher").addEventListener("click", function(e){
     e.stopPropagation();
-    enterFocus(index);
+    if (state.focusedIndex === index) exitFocus();
+    else enterFocus(index);
   });
 
   var player = createTwitchPlayer("mount-" + index, channel, PARENT_DOMAINS, function(readyPlayer){

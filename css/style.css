@@ -310,7 +310,8 @@ main.count-4 [data-rank="4"]{ grid-column: 2; grid-row: 2; }
   transition: background 0.15s ease;
 }
 .focus-catcher:hover{ background: rgba(0,0,0,0.18); }
-.focus-catcher .expand-icon{
+.focus-catcher .expand-icon,
+.focus-catcher .collapse-icon{
   font-size: 22px;
   color: #fff;
   text-shadow: 0 1px 6px rgba(0,0,0,0.7);
@@ -319,13 +320,24 @@ main.count-4 [data-rank="4"]{ grid-column: 2; grid-row: 2; }
   transition: opacity 0.15s ease, transform 0.15s ease;
   pointer-events: none;
 }
-.focus-catcher:hover .expand-icon{ opacity: 0.95; transform: scale(1); }
+.focus-catcher:hover .expand-icon,
+.focus-catcher:hover .collapse-icon{ opacity: 0.95; transform: scale(1); }
 
 /* Focus (theater) mode: one big stage + a thumbnail strip for the rest. */
 main.focus-mode{ display: grid; }
 .slot[data-role="stage"]{ border-color: var(--accent); }
-.slot[data-role="stage"] .focus-catcher{ display: none; }
 .slot[data-role="stage"] .exit-focus-btn{ display: flex; }
+
+/* On the enlarged stage, leave a strip at the bottom uncovered so Twitch's
+   own control bar (play/pause, volume, quality, fullscreen) stays directly
+   clickable; clicking anywhere else on the video exits back to multiview. */
+.slot[data-role="stage"] .focus-catcher{
+  inset: 0 0 46px 0;
+  cursor: zoom-out;
+}
+.slot[data-role="stage"] .focus-catcher .expand-icon{ display: none; }
+.slot[data-role="stage"] .focus-catcher .collapse-icon{ display: inline; }
+.focus-catcher .collapse-icon{ display: none; }
 
 .slot[data-role="thumb"]{ cursor: pointer; }
 .slot[data-role="thumb"] .slot-topbar{ padding: 4px 6px; }
