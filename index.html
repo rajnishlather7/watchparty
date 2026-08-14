@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>WatchParty</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://player.twitch.tv/js/embed/v1.js"></script>
+</head>
+<body>
+
+<div id="app">
+  <header>
+    <div class="brand">
+      <span class="dot"></span>
+      <h1>WATCHPARTY</h1>
+      <span class="tag">4 SLOTS &middot; 1 VOICE</span>
+    </div>
+    <div class="controls">
+      <div class="audio-control">
+        <label for="audio-select">LISTENING TO</label>
+        <select id="audio-select">
+          <option value="">— none —</option>
+        </select>
+      </div>
+      <button id="add-btn" type="button">+ Add stream</button>
+    </div>
+  </header>
+
+  <main id="grid">
+    <!-- 4 slots injected by js/app.js -->
+  </main>
+</div>
+
+<div class="modal-overlay hidden" id="modal-overlay">
+  <div class="modal">
+    <h2>Add a stream</h2>
+    <p class="hint">Paste a twitch.tv link, or just the channel name</p>
+    <input type="text" id="channel-input" placeholder="e.g. dota2ti or twitch.tv/dota2ti" autocomplete="off">
+    <div class="error" id="modal-error"></div>
+    <div class="modal-actions">
+      <button type="button" id="modal-cancel">Cancel</button>
+      <button type="button" id="modal-confirm" class="primary">Add</button>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
