@@ -5,9 +5,11 @@
 import { MAX_SLOTS, PARENT_DOMAINS, state, countFilled } from "./state.js";
 import { parseChannel, createTwitchPlayer, destroyPlayer } from "./twitch.js";
 import { computeFilledIndices, applyGridLayout, applyFocusLayout } from "./layout.js";
+import { readChannelsFromURL, writeChannelsToURL } from "./urlSync.js";
 
 var grid = document.getElementById("grid");
 var addBtn = document.getElementById("add-btn");
+var shareBtn = document.getElementById("share-btn");
 var audioSelect = document.getElementById("audio-select");
 var overlay = document.getElementById("modal-overlay");
 var input = document.getElementById("channel-input");
@@ -86,6 +88,7 @@ function relayout(){
 function enterFocus(index){
   if (!state.slots[index]) return;
   state.focusedIndex = index;
+  setAudible(index);
   relayout();
 }
 
@@ -133,6 +136,7 @@ function addStream(index, channel){
   refreshAudioOptions();
   updateAddButton();
   relayout();
+  syncURL();
 }
 
 function removeStream(index){
@@ -153,6 +157,7 @@ function removeStream(index){
   refreshAudioOptions();
   updateAddButton();
   relayout();
+  syncURL();
 
   // Hand audio to whichever stream remains rather than leaving everything
   // silently muted.
@@ -163,6 +168,24 @@ function removeStream(index){
     }
     if (next !== -1) setAudible(next);
   }
+}
+
+// ---------- shareable URL ----------
+
+function syncURL(){
+  var channels = computeFilledIndices(state.slots).map(function(i){
+    return state.slots[i].channel;
+  });
+  writeChannelsToURL(channels);
+}
+
+function loadFromURL(){
+  var channels = readChannelsFromURL();
+  channels.forEach(function(channel){
+    var target = state.slots.indexOf(null);
+    if (target === -1) return;
+    addStream(target, channel);
+  });
 }
 
 function updateAddButton(){
@@ -202,6 +225,25 @@ function setAudible(index){
 audioSelect.addEventListener("change", function(){
   var v = this.value;
   setAudible(v === "" ? -1 : parseInt(v, 10));
+});
+
+shareBtn.addEventListener("click", function(){
+  var restoreLabel = shareBtn.textContent;
+  var restore = function(){
+    shareBtn.textContent = restoreLabel;
+    shareBtn.disabled = false;
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(location.href).then(function(){
+      shareBtn.textContent = "Copied!";
+      shareBtn.disabled = true;
+      setTimeout(restore, 1500);
+    }).catch(function(){
+      window.prompt("Copy this link:", location.href);
+    });
+  } else {
+    window.prompt("Copy this link:", location.href);
+  }
 });
 
 // ---------- add-stream modal ----------
@@ -250,4 +292,5 @@ document.addEventListener("keydown", function(e){
 // ---------- init ----------
 
 buildSlotsDOM();
+loadFromURL();
 updateAddButton();

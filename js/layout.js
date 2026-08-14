@@ -39,6 +39,12 @@ export function applyGridLayout(gridEl, slotEls, filled){
     var el = slotEls[idx];
     el.dataset.hidden = "false";
     el.dataset.rank = String(i + 1);
+    // With exactly one stream there's nothing to multiview against, so
+    // treat it as already "focused": this hides the click-to-focus overlay
+    // and hands clicks straight to Twitch's own play/pause/volume controls
+    // instead of trapping the very first stream behind an overlay with no
+    // way to reach it until a second stream gets added.
+    if (filled.length === 1) el.dataset.role = "stage";
     var badge = el.querySelector(".slot-index");
     if (badge) badge.textContent = "0" + (i + 1);
   });
