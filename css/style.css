@@ -296,8 +296,12 @@ main.count-4 [data-rank="4"]{ grid-column: 2; grid-row: 2; }
 }
 .remove-btn:hover{ background: var(--live); border-color: var(--live); }
 
-/* Click-to-focus overlay: sits above the player, below the topbar. Hovering
-   any tile hints that it's clickable; clicking it enlarges that stream. */
+/* Click-to-focus overlay. Inert by default (pointer-events: none) so it
+   never blocks Twitch's own UI — the center play button, the hover control
+   bar, etc. — on the main grid tiles or the enlarged stage. Only reactivated
+   for small thumbnails (in theater mode), where clicking anywhere is a
+   reasonable way to switch focus since there's no meaningful native control
+   surface at that size anyway. */
 .focus-catcher{
   position: absolute;
   inset: 0;
@@ -306,12 +310,10 @@ main.count-4 [data-rank="4"]{ grid-column: 2; grid-row: 2; }
   align-items: center;
   justify-content: center;
   background: rgba(0,0,0,0);
-  cursor: zoom-in;
+  pointer-events: none;
   transition: background 0.15s ease;
 }
-.focus-catcher:hover{ background: rgba(0,0,0,0.18); }
-.focus-catcher .expand-icon,
-.focus-catcher .collapse-icon{
+.focus-catcher .expand-icon{
   font-size: 22px;
   color: #fff;
   text-shadow: 0 1px 6px rgba(0,0,0,0.7);
@@ -320,24 +322,34 @@ main.count-4 [data-rank="4"]{ grid-column: 2; grid-row: 2; }
   transition: opacity 0.15s ease, transform 0.15s ease;
   pointer-events: none;
 }
-.focus-catcher:hover .expand-icon,
-.focus-catcher:hover .collapse-icon{ opacity: 0.95; transform: scale(1); }
+
+.slot[data-role="thumb"] .focus-catcher{ pointer-events: auto; cursor: pointer; }
+.slot[data-role="thumb"] .focus-catcher:hover{ background: rgba(0,0,0,0.18); }
+.slot[data-role="thumb"] .focus-catcher:hover .expand-icon{ opacity: 0.95; transform: scale(1); }
 
 /* Focus (theater) mode: one big stage + a thumbnail strip for the rest. */
 main.focus-mode{ display: grid; }
 .slot[data-role="stage"]{ border-color: var(--accent); }
 .slot[data-role="stage"] .exit-focus-btn{ display: flex; }
 
-/* On the enlarged stage, leave a strip at the bottom uncovered so Twitch's
-   own control bar (play/pause, volume, quality, fullscreen) stays directly
-   clickable; clicking anywhere else on the video exits back to multiview. */
-.slot[data-role="stage"] .focus-catcher{
-  inset: 0 0 46px 0;
-  cursor: zoom-out;
+/* Small explicit "Focus" button for grid tiles (not thumbnails, not the
+   stage) — clicking it enlarges that stream, without any invisible overlay
+   sitting over the video itself. */
+.expand-btn{
+  display: none;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  background: rgba(10,10,15,0.55);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 5px 12px;
+  backdrop-filter: blur(4px);
 }
-.slot[data-role="stage"] .focus-catcher .expand-icon{ display: none; }
-.slot[data-role="stage"] .focus-catcher .collapse-icon{ display: inline; }
-.focus-catcher .collapse-icon{ display: none; }
+.expand-btn:hover{ border-color: var(--accent); color: var(--accent); }
+.slot[data-role=""] .expand-btn{ display: flex; }
 
 .slot[data-role="thumb"]{ cursor: pointer; }
 .slot[data-role="thumb"] .slot-topbar{ padding: 4px 6px; }

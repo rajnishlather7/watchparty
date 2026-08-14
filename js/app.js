@@ -39,12 +39,12 @@ function filledSlotHTML(index, channel){
       '<span class="channel-tag"><span class="live-dot"></span>' + channel +
         '<span class="audible-badge" style="display:none">&#128266;</span></span>' +
       '<button type="button" class="exit-focus-btn" title="Back to multiview">&#8862; Multiview</button>' +
+      '<button type="button" class="expand-btn" title="Focus this stream">&#10530; Focus</button>' +
       '<button type="button" class="remove-btn" aria-label="Remove stream" title="Remove">&times;</button>' +
     "</div>" +
     '<div class="mount" id="mount-' + index + '"></div>' +
     '<div class="focus-catcher" title="Click to focus this stream">' +
-      '<span class="expand-icon">&#10021;</span>' +
-      '<span class="collapse-icon">&#10529;</span>' +
+      '<span class="expand-icon">&#10530;</span>' +
     "</div>"
   );
 }
@@ -119,10 +119,13 @@ function addStream(index, channel){
     e.stopPropagation();
     exitFocus();
   });
+  slot.querySelector(".expand-btn").addEventListener("click", function(e){
+    e.stopPropagation();
+    enterFocus(index);
+  });
   slot.querySelector(".focus-catcher").addEventListener("click", function(e){
     e.stopPropagation();
-    if (state.focusedIndex === index) exitFocus();
-    else enterFocus(index);
+    enterFocus(index);
   });
 
   var player = createTwitchPlayer("mount-" + index, channel, PARENT_DOMAINS, function(readyPlayer){
